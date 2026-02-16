@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Intro Kubernetes tutorial for MDA Research Kubernetes users. Detailed procedures live in Orientation and Q&amp;A links.">
+  <title>MDA Research Kubernetes Intro Guide</title>
+  <style>
+    :root {
+      --bg: #f5f8fb;
+      --surface: #ffffff;
+      --text: #1f2933;
+      --muted: #52667a;
+      --border: #d8e1ea;
+      --accent: #0b5ed7;
+      --accent-soft: #eaf2ff;
+      --ok-bg: #eaf8ef;
+      --ok-border: #c6e7d2;
+      --ok-text: #1c5f3d;
+      --warn-bg: #fff6e5;
+      --warn-border: #ffdea2;
+      --warn-text: #7a4d00;
+      --code-bg: #f7fafc;
+      --code-border: #d8e1ea;
+      --pre-bg: #0f172a;
+      --pre-text: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 14px;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.65;
+      color: var(--text);
+      background: linear-gradient(180deg, #f9fcff 0%, var(--bg) 100%);
+    }
+
+    main {
+      max-width: 1140px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      padding: 30px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      color: #0f3f8c;
+    }
+
+    h2 {
+      margin-top: 32px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+      color: #123a72;
+      font-size: 1.3rem;
+    }
+
+    h3 {
+      margin-top: 18px;
+      margin-bottom: 8px;
+      color: #1f4f8f;
+      font-size: 1.06rem;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    ul,
+    ol {
+      margin-top: 8px;
+      margin-bottom: 14px;
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    a {
+      color: #0b57d0;
+      word-break: break-word;
+    }
+
+    .subtitle {
+      margin: 0 0 6px;
+      color: var(--muted);
+    }
+
+    .small {
+      color: #607286;
+      font-size: 0.9rem;
+    }
+
+    .panel,
+    .good,
+    .warn {
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0 16px;
+    }
+
+    .panel {
+      background: var(--accent-soft);
+      border: 1px solid #cddfff;
+    }
+
+    .good {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      color: var(--ok-text);
+    }
+
+    .warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .critical {
+      background: #fff1f2;
+      border: 2px solid #dc2626;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0 16px;
+      color: #7f1d1d;
+    }
+
+    .critical h2 {
+      border-left-color: #dc2626;
+      color: #991b1b;
+    }
+
+    .critical .table-wrap table {
+      border: 2px solid #fca5a5;
+      background: #fff7f7;
+    }
+
+    .critical th,
+    .critical td {
+      border-color: #fca5a5;
+      color: #7f1d1d;
+      background: #fff7f7;
+    }
+
+    .critical th {
+      background: #ffe4e6;
+      color: #991b1b;
+    }
+
+    .critical a {
+      color: #b91c1c;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 12px 0 8px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fbfdff;
+      padding: 14px;
+    }
+
+    code {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+    }
+
+    pre {
+      margin: 10px 0 16px;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--pre-bg);
+      color: var(--pre-text);
+      overflow-x: auto;
+    }
+
+    pre code {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 0.9em;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 10px 0 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.96rem;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      padding: 10px;
+    }
+
+    th {
+      background: #f7fbff;
+      color: #123a72;
+    }
+
+    .toc {
+      columns: 2;
+      column-gap: 24px;
+    }
+
+    @media (max-width: 920px) {
+      main {
+        padding: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        columns: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>MDA Research Kubernetes Link Directory</h1>
+    <p class="subtitle">Content credit to Yiyang Niu (<a href="mailto:yniu2@mdanderson.org">yniu2@mdanderson.org</a>) &amp; Yang Zhang (<a href="mailto:yzhang45@mdanderson.org">yzhang45@mdanderson.org</a>).</p>
+    <p class="subtitle">Organized by Xinrui Li (<a href="mailto:xli37@mdanderson.org">xli37@mdanderson.org</a>).</p>
+    <p class="small">
+      This page is a link organization index only. It is not a tutorial.
+      Each link includes what it is for and when to use it.
+    </p>
+
+    <section class="panel" aria-labelledby="how-to-use-title">
+      <h2 id="how-to-use-title">How to Use This Page</h2>
+      <ol>
+        <li>Start with the three links in Critical Links Must.</li>
+        <li>Use Account and Access links to request accounts and config support.</li>
+        <li>Use Setup and Operations links for specific tasks.</li>
+      </ol>
+      <div class="good">
+        Contact for kubeconfig and templates: <a href="mailto:EDI-Kubernetes-Admin@mdanderson.org">EDI-Kubernetes-Admin@mdanderson.org</a>
+      </div>
+    </section>
+
+    <section class="critical" aria-labelledby="critical-links-title">
+      <h2 id="critical-links-title">Critical Links (Must Read)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Link</th>
+              <th>What It Is About</th>
+              <th>When to Use</th>
+              <th>Access Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://github.mdanderson.org/yzhang45/Kubernetes-Orientation/blob/main/README.md">Kubernetes Orientation README</a></td>
+              <td>Primary orientation and initial setup context for MDA Kubernetes users.</td>
+              <td>Read first before any setup or job submission.</td>
+              <td>Internal GitHub access required.</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.mdanderson.org/EDI-Research-Kubernetes/Kubernetes_QA/blob/main/README.md">Kubernetes Q&amp;A README</a></td>
+              <td>Operational Q&amp;A, common errors, troubleshooting, and task-specific guidance.</td>
+              <td>Use during day-to-day operation and troubleshooting.</td>
+              <td>Internal GitHub access required.</td>
+            </tr>
+            <tr>
+              <td><a href="https://mdandersonorg-my.sharepoint.com/:p:/r/personal/xli37_mdanderson_org/_layouts/15/Doc.aspx?sourcedoc=%7B77743AA8-EDDD-4BDD-B126-69B65947CD02%7D&amp;file=251111_BCB%26BS_kubernetes_server_seminar%20-%20Copy.pptx&amp;action=edit&amp;mobileredirect=true&amp;DefaultItemOpen=1">Kubernetes Seminar PowerPoint By Yiyang Niu</a></td>
+              <td>Presentation with key Kubernetes suggestions and server usage recommendations.</td>
+              <td>Use for overview and context before deep diving into docs.</td>
+              <td>SharePoint and MDA account access required.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="account-links-title">
+      <h2 id="account-links-title">Account and Access Links</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Link</th>
+              <th>What It Is About</th>
+              <th>When to Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://hpcweb.mdanderson.edu/">MDA HPC Portal</a></td>
+              <td>Main entry point for HPC resources, policies, and account processes.</td>
+              <td>Use for official HPC information and request navigation.</td>
+            </tr>
+            <tr>
+              <td><a href="https://hpcweb.mdanderson.edu/request_account.html">Seadragon Account Request</a></td>
+              <td>Account request page for Seadragon access.</td>
+              <td>Use before trying to submit Kubernetes jobs from Seadragon.</td>
+            </tr>
+            <tr>
+              <td><a href="mailto:EDI-Kubernetes-Admin@mdanderson.org">EDI-Kubernetes-Admin@mdanderson.org</a></td>
+              <td>Team contact for kubeconfig file and job template provisioning.</td>
+              <td>Email when you need Kubernetes configuration and storage mapping setup.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="training-links-title">
+      <h2 id="training-links-title">Training and Orientation Materials</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Link</th>
+              <th>What It Is About</th>
+              <th>When to Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://mdandersonorg-my.sharepoint.com/personal/yzhang45_mdanderson_org/_layouts/15/guestaccess.aspx?share=EXs4wrqjoT5Dk2gsXkkPr34BtAMwtwJfXm0sX-HQJ56cUw&amp;e=F8xpAN">Kubernetes User Setup.docx</a></td>
+              <td>Written setup walkthrough and supporting notes.</td>
+              <td>Use when you want a document-style setup reference.</td>
+            </tr>
+            <tr>
+              <td><a href="https://mdandersonorg-my.sharepoint.com/personal/yzhang45_mdanderson_org/_layouts/15/guestaccess.aspx?share=EdnlAB0lmnNDuCuNplCmln0BTAMZe93I3r13vRekn9wUzA&amp;nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&amp;e=5BShJF">Kubernetes User Setup.mp4</a></td>
+              <td>Video version of user setup flow.</td>
+              <td>Use if you prefer a visual walkthrough.</td>
+            </tr>
+            <tr>
+              <td><a href="https://mdandersonorg-my.sharepoint.com/personal/yzhang45_mdanderson_org/_layouts/15/guestaccess.aspx?guestaccesstoken=zLbWXT3Yw%2Fmjz91BSCE6RkdbD7DOQ2B5GOVXt54dFOw%3D&amp;docid=2_10225cb0526084f6a959537b8d51dd848&amp;rev=1&amp;e=OmrYTI">K8s Orientation Introduction v3.mp4</a></td>
+              <td>Orientation video with Kubernetes context and usage guidance.</td>
+              <td>Use as an overview before detailed setup.</td>
+            </tr>
+            <tr>
+              <td><a href="https://mdandersonorg-my.sharepoint.com/personal/yzhang45_mdanderson_org/_layouts/15/guestaccess.aspx?guestaccesstoken=9mi83qXhtEKx1XvmHf7kWkuQJ%2fLVWoTMG7Mdxk%2f5D0U%3d&amp;docid=2_05da03f0fefd344bfbc962430fbcaeeae&amp;rev=1&amp;e=OmrYTI">Kubernetes Orientation.pdf</a></td>
+              <td>PDF orientation material for offline reading.</td>
+              <td>Use when you need a printable/static reference.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="setup-links-title">
+      <h2 id="setup-links-title">Setup and Workflow Links</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Link</th>
+              <th>What It Is About</th>
+              <th>When to Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="http://hpcexhaproxy.mdanderson.edu/jupyter/">MDA JupyterHub Portal</a></td>
+              <td>Interactive Kubernetes environment for notebooks and development workloads.</td>
+              <td>Use for interactive development and testing.</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.mdanderson.org/yzhang45/MDAJupyterHub/blob/main/README.md">MDAJupyterHub README</a></td>
+              <td>Detailed JupyterHub usage notes and environment guidance.</td>
+              <td>Use when configuring or troubleshooting JupyterHub usage.</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.mdanderson.org/yzhang45/BuildDockerImage/blob/main/README.md">BuildDockerImage README</a></td>
+              <td>How to build Docker images for Kubernetes workloads.</td>
+              <td>Use when your dependencies are not covered by standard images.</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.mdanderson.org/EDI-Research-Kubernetes/VSCode_JupyterHub/blob/main/README.md">VSCode_JupyterHub README</a></td>
+              <td>Remote VS Code workflow integrated with Kubernetes and JupyterHub usage.</td>
+              <td>Use when developing remotely in VS Code.</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.mdanderson.org/EDI-Research-Kubernetes/PythonManagement/blob/main/Alternative%20Methods%20to%20Anaconda%20for%20Python%20Management.md">Alternative Python Management</a></td>
+              <td>Methods for Python package/environment management without Anaconda.</td>
+              <td>Use when you need lighter or alternative environment management.</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.mdanderson.org/EDI-Research-Kubernetes/ShareStorage#using-supplementalgroups-in-kubernetes">ShareStorage supplementalGroups</a></td>
+              <td>How to access multiple network storage mounts using supplemental groups.</td>
+              <td>Use when one container needs access to multiple storage group permissions.</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/MuhammedKalkan/OpenLens/releases/tag/v6.5.2-366">OpenLens Release v6.5.2-366</a></td>
+              <td>OpenLens download for Kubernetes UI management and log viewing.</td>
+              <td>Use if you prefer UI-based Kubernetes management instead of only CLI.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="operations-links-title">
+      <h2 id="operations-links-title">Operations and Monitoring Links</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Link</th>
+              <th>What It Is About</th>
+              <th>When to Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://hpcexhaproxy.mdanderson.edu/kubernetes/nodes/">Kubernetes Nodes Dashboard</a></td>
+              <td>Cluster-wide node/resource visibility.</td>
+              <td>Use to check available node and hardware status.</td>
+            </tr>
+            <tr>
+              <td><a href="https://hpcexhaproxy.mdanderson.edu/kubernetes/users/">Kubernetes Users Dashboard</a></td>
+              <td>User-facing dashboard for workloads and metrics history.</td>
+              <td>Use to review running jobs and historical CPU/GPU/RAM usage.</td>
+            </tr>
+            <tr>
+              <td><a href="https://mdandersonorg.sharepoint.com/sites/information-services/SitePages/Research-High-Performance-Computing.aspx">Research High-Performance Computing</a></td>
+              <td>Institutional HPC resource overview and platform information.</td>
+              <td>Use for official infrastructure and resource context.</td>
+            </tr>
+            <tr>
+              <td><a href="https://mdandersonorg.sharepoint.com/sites/information-services/SitePages/Research-High-Performance-Computing.aspx#resources-at-md-anderson">HPC Resources at MD Anderson</a></td>
+              <td>Direct section showing available resources.</td>
+              <td>Use when confirming cluster capacity and hardware availability.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="reference-links-title">
+      <h2 id="reference-links-title">Official Technical Reference</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Link</th>
+              <th>What It Is About</th>
+              <th>When to Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://kubernetes.io/docs/concepts/workloads/controllers/job/">Kubernetes Job Controller Docs</a></td>
+              <td>Official Kubernetes documentation for batch Job resources.</td>
+              <td>Use for YAML schema, parallelism, completions, and controller behavior details.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
